@@ -16,12 +16,12 @@ Basecalling\* -> Chopping -> De-novo assembling -> Blasting\+ -> Aligning\#
 
 ### Requirements
 
-Software
+Software:
 * Guppy
 * Pomoxis
 * Blast or Diamond
 
-Reference data
+Reference data:
 * Database for Blast or Diamond
 
 
@@ -38,17 +38,17 @@ The flag `--slurm_account` sets your Pawsey account to run on Zeus. In alternati
 After blasting and identifying reference sequences of interest, alignment can be performed against them, by using the flag `--seqid` to provide the sequence IDs:
 
 ```
-nextflow run marcodelapierre/nanopore-nf --slurm_account='pawsey0001' --read_dir='reas' -resume --seqid='comma,separated,list,of,ids,from,blast'
+nextflow run marcodelapierre/nanopore-nf --slurm_account='pawsey0001' --read_dir='reads' -resume --seqid='comma,separated,list,of,ids,from,blast'
 ```
 
-Note the use -f `-resume` oo restart from the previous run.
+Note the use of `-resume` to restart from the previous run.
 
 
 ### Pipeline variants
 
 The expected default input is one or multiple directory/ies containing raw read files from experiment(s). By default, Blast is used for blasting.
 
-1. To feed instead a single (or multiple, using name patterns) already basecalled FASTA file(s) as input, use the flag `--basecalled=basecalled.fasta`; raw reads are ignored
+1. To feed instead a single (or multiple, using name patterns) already basecalled FASTA file(s) as input, use the flag `--basecalled='basecalled.fasta'`; raw reads are ignored
 2. To use Diamond for blasting, add the flag `--diamond`
 
 
