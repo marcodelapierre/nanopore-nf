@@ -1,4 +1,4 @@
 #!/bin/bash
 
 module load nextflow
-nextflow log -f workdir,exit,name "$@"
+nextflow log -f workdir,exit,name,duration "$@"
