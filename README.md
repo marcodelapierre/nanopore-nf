@@ -55,6 +55,8 @@ Name patterns can be used to let the pipeline process multiple datasets at once.
 
 2. If you have read directories organised as `sample*/reads`, then use the flag `--read_dir='sample*/reads'`. Output directories will be created according to `sample*/results_reads`.
 
+A similar syntax holds when using basecalled FASTA inputs through the flag `--basecalled`.
+
 
 ### Requirements
 
