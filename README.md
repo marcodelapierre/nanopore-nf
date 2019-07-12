@@ -37,14 +37,23 @@ Note the use of `-resume` to restart from the previous run.
 
 The expected default input is one or multiple directory/ies containing raw read files from experiment(s). By default, Blast is used for blasting.
 
-1. To feed instead a single (or multiple, using name patterns) already basecalled FASTA file(s) as input, use the flag `--basecalled='basecalled.fasta'`; raw reads are ignored
-2. To use Diamond for blasting, add the flag `--diamond`
+1. To feed instead a single (or multiple, using name patterns) already basecalled FASTA file(s) as input, use the flag `--basecalled='basecalled.fasta'`; raw reads are ignored.
+2. To use Diamond for blasting, add the flag `--diamond`.
 
 
 ### Optional parameters
 
-* Change *evalue* for blasting: `--evalue='0.1'`
-* Change minimum length threshold for assembled contigs to be considered for blasting: `--min_len_contig='1000'`
+* Change *evalue* for blasting: `--evalue='0.1'`.
+* Change minimum length threshold for assembled contigs to be considered for blasting: `--min_len_contig='1000'`.
+
+
+### Multiple inputs at once
+
+Name patterns can be used to let the pipeline process multiple datasets at once.
+
+1. Imagine you have read directories all within the same location, with names `sample*`. Then use the flag `--read_dir='sample*'`. One output directory per input dataset will be created in the same location, with names `results_sample*`.
+
+2. If you have read directories organised as `sample*/reads`, then use the flag `--read_dir='sample*/reads'`. Output directories will be created according to `sample*/results_reads`.
 
 
 ### Requirements
