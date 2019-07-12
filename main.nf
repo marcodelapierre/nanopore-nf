@@ -1,6 +1,8 @@
 #!/usr/bin/env nextflow
 
 params.read_dir='reads'
+params.basecalled = ''
+params.diamond = false
 params.seqid=''
 
 params.min_len_contig='1000'
@@ -8,15 +10,14 @@ params.evalue='0.1'
 params.outsuffix='results_'
 
 
-Channel
- .fromPath( params.read_dir )
- .map{ it -> [ it, it.parent, it.name ] }
- .set{ read_ch }
+read_ch =     params.basecalled ? Channel.empty() : Channel.fromPath( params.read_dir ).map{ it -> [ it, it.parent, it.name ] }
+basefile_ch = params.basecalled ? Channel.fromPath( params.basecalled ).map{ it -> [ it, it.parent, it.name ] } : Channel.empty()
 
 
 process basecall {
 tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
+stageInMode 'symlink'
 
 input:
 set file('read_dir'), dir, name from read_ch
@@ -42,9 +43,10 @@ ln -s pass/fastq_runid_*.fastq Basecalled.fastq
 process chop {
 tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
+stageInMode params.basecalled ? 'copy' : 'symlink'
 
 input:
-set file('Basecalled.fastq'), dir, name from base_ch
+set file('Basecalled.fastq'), dir, name from base_ch.mix(basefile_ch)
 
 output:
 set file('Chopped.fastq'), dir, name into chop_ch,chop2_ch
@@ -66,7 +68,7 @@ input:
 set file('Chopped.fastq'), dir, name from chop_ch
 
 output:
-set file('Denovo_subset.fa'), dir, name into denovo_ch
+set file('Denovo_subset.fa'), dir, name into denovo_ch,denovo2_ch
 
 script:
 """
@@ -91,6 +93,9 @@ set file('Denovo_subset.fa'), dir, name from denovo_ch
 output:
 set file('blast.tsv'), dir, name into blast_ch
 
+when:
+!params.diamond
+
 script:
 """
 blastn \
@@ -108,6 +113,32 @@ blast_formatter \
   -outfmt "6 qaccver saccver pident length evalue bitscore stitle" -out blast_unsort.tsv
 
 sort -n -r -k 6 blast_unsort.tsv >blast.tsv
+"""
+}
+
+
+process diamond {
+tag "${dir}/${name}"
+publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
+
+input:
+set file('Denovo_subset.fa'), dir, name from denovo2_ch
+
+output:
+set file('diamond.tsv'), dir, name into diamond_ch
+
+when:
+params.diamond
+
+script:
+"""
+diamond blastx \
+  -q Denovo_subset.fa -d ${params.diamond_db} \
+  -f "6 qseqid  sseqid  pident length evalue bitscore stitle" -o diamond_unsort.tsv \
+  --evalue ${params.evalue} \
+  -p ${task.cpus}
+
+sort -n -r -k 6 diamond_unsort.tsv >diamond.tsv
 """
 }
 
