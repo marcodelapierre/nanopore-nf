@@ -2,7 +2,7 @@
 
 The pipeline requires [Nextflow](https://github.com/nextflow-io/nextflow) to run. 
 Tests have been done with Nextflow version `19.04.1`. 
-The standard profile assumes running on Zeus at Pawsey Supercomputing Centre.
+The standard profile assumes running on Zeus at Pawsey Supercomputing Centre and uses containerised software.
 
 
 ### Pipeline
