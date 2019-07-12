@@ -14,17 +14,6 @@ Basecalling\* -> Chopping -> De-novo assembling -> Blasting\+ -> Aligning\#
 \# Requires additional input in a subsequent run
 
 
-### Requirements
-
-Software:
-* Guppy
-* Pomoxis
-* Blast or Diamond
-
-Reference data:
-* Database for Blast or Diamond
-
-
 ### Basic usage
 
 ```
@@ -56,6 +45,17 @@ The expected default input is one or multiple directory/ies containing raw read 
 
 * Change *evalue* for blasting: `--evalue='0.1'`
 * Change minimum length threshold for assembled contigs to be considered for blasting: `--min_len_contig='1000'`
+
+
+### Requirements
+
+Software:
+* Guppy
+* Pomoxis
+* Blast or Diamond
+
+Reference data:
+* Database for Blast or Diamond
 
 
 ### Additional resources
