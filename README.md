@@ -17,7 +17,9 @@ Basecalling\* -> Chopping -> De-novo assembling -> Blasting\+ -> Aligning\#
 ### Basic usage
 
 ```
-nextflow run marcodelapierre/nanopore-nf --slurm_account='pawsey0001' --read_dir='reads'
+nextflow run marcodelapierre/nanopore-nf \
+  --slurm_account='pawsey0001' \
+  --read_dir='reads'
 ```
 
 The flag `--read_dir` feeds the directory name where read files from a single experiment are located. 
@@ -27,7 +29,10 @@ The flag `--slurm_account` sets your Pawsey account to run on Zeus. In alternati
 After blasting and identifying reference sequences of interest, alignment can be performed against them, by using the flag `--seqid` to provide the sequence IDs:
 
 ```
-nextflow run marcodelapierre/nanopore-nf --slurm_account='pawsey0001' --read_dir='reads' -resume --seqid='comma,separated,list,of,ids,from,blast'
+nextflow run marcodelapierre/nanopore-nf \
+  --slurm_account='pawsey0001' \
+  --read_dir='reads' \
+  -resume --seqid='comma,separated,list,of,ids,from,blast'
 ```
 
 Note the use of `-resume` to restart from the previous run.
