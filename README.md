@@ -26,7 +26,7 @@ The flag `--read_dir` feeds the directory name where read files from a single ex
 Name patterns can be used to run multiple experiments at once. Output files are stored in subdirectory(ies) with name `results_$read_dir`. 
 The flag `--slurm_account` sets your Pawsey account to run on Zeus. In alternative, edit the value of the variable `params.slurm_account` in the file `nextflow.config`.
 
-After blasting and identifying reference sequences of interest, alignment can be performed against them, by using the flag `--seqid` to provide the sequence IDs, and the flag `-resume` to restart from the previous run.
+After blasting and identifying reference sequences of interest, alignment can be performed against them, by using the flag `--seqid` to provide the sequence IDs, and the flag `-resume` to restart from the previous run:
 
 ```
 nextflow run marcodelapierre/nanopore-nf \
