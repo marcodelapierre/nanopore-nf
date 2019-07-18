@@ -1,4 +1,4 @@
-## Nanopore pipeline for DPIRD
+## Nanopore pipeline for DPIRD - Nextflow edition
 
 The pipeline requires [Nextflow](https://github.com/nextflow-io/nextflow) to run. 
 Tests have been done with Nextflow version `19.04.1`. 
