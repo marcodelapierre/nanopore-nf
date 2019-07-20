@@ -43,7 +43,7 @@ ln -s pass/fastq_runid_*.fastq Basecalled.fastq
 process chop {
 tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
-stageInMode ( ( params.basecalled && workflow.profile == 'standard' ) ? 'copy' : 'symlink' )
+stageInMode ( ( params.basecalled && workflow.profile == 'zeus' ) ? 'copy' : 'symlink' )
 
 input:
 set file('Basecalled.fastq'), dir, name from base_ch.mix(basefile_ch)

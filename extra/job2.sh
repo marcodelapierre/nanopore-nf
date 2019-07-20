@@ -9,4 +9,6 @@
 
 module load nextflow
 
-./nanopore.nf -resume -name nxf-${SLURM_JOB_ID} --read_dir='sample6' --seqid='D10930.1,MK116873.1'
+./nanopore.nf -resume \
+  -profile zeus -name nxf-${SLURM_JOB_ID} \
+  --read_dir='sample6' --seqid='D10930.1,MK116873.1'
