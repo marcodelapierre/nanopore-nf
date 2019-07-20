@@ -77,5 +77,3 @@ Reference data:
 
 The `extra` directory contains example Slurm scripts, `job1.sh` and `job2.sh` to run on Zeus. There is also a sample script `nxf-log.sh` that takes a run name as input and displays formatted runtime information.
 
-
-**Note**: Slurm parameters in the file `nextflow.config` (cores, memory, walltime) are general values, that require tuning for production runs.
