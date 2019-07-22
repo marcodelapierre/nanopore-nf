@@ -75,5 +75,5 @@ Reference data:
 
 ### Additional resources
 
-The `extra` directory contains example Slurm scripts, `job1.sh` and `job2.sh` to run on Zeus. There is also a sample script `nxf-log.sh` that takes a run name as input and displays formatted runtime information.
+The `extra` directory contains example Slurm scripts, `job1.sh` and `job2.sh` to run on Zeus. There is also a sample script `log.sh` that takes a run name as input and displays formatted runtime information.
 
