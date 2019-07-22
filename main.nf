@@ -92,6 +92,7 @@ set file('Denovo_subset.fa'), dir, name from denovo_ch
 
 output:
 set file('blast.tsv'), dir, name into blast_ch
+set file('blast.xml'), dir, name into blast_xml_ch
 
 when:
 !params.diamond
