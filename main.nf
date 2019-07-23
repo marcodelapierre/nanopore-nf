@@ -127,6 +127,7 @@ set file('Denovo_subset.fa'), dir, name from denovo2_ch
 
 output:
 set file('diamond.tsv'), dir, name into diamond_ch
+set file('diamond.xml'), dir, name into diamond_xml_ch
 
 when:
 params.diamond
@@ -135,7 +136,13 @@ script:
 """
 diamond blastx \
   -q Denovo_subset.fa -d ${params.diamond_db} \
-  -f "6 qseqid  sseqid  pident length evalue bitscore stitle" -o diamond_unsort.tsv \
+  -f 5 -o diamond.xml \
+  --evalue ${params.evalue} \
+  -p ${task.cpus}
+
+diamond blastx \
+  -q Denovo_subset.fa -d ${params.diamond_db} \
+  -f 6 qseqid  sseqid  pident length evalue bitscore stitle -o diamond_unsort.tsv \
   --evalue ${params.evalue} \
   -p ${task.cpus}
 
