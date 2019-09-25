@@ -7,6 +7,7 @@
 #SBATCH --no-requeue
 #SBATCH --export=none
 
+module load singularity/3.3.0
 module load nextflow
 
 nextflow run marcodelapierre/nanopore-nf  -resume \
