@@ -10,8 +10,8 @@ params.evalue='0.1'
 params.outsuffix='results_'
 
 
-read_ch =     params.basecalled ? Channel.empty() : Channel.fromPath( params.read_dir ).map{ it -> [ it, it.parent, it.name ] }
-basefile_ch = params.basecalled ? Channel.fromPath( params.basecalled ).map{ it -> [ it, it.parent, it.name ] } : Channel.empty()
+read_ch =     params.basecalled ? Channel.empty() : Channel.fromPath( params.read_dir ).map{ it -> [ it.parent, it.name, it ] }
+basefile_ch = params.basecalled ? Channel.fromPath( params.basecalled ).map{ it -> [ it.parent, it.name, it ] } : Channel.empty()
 
 
 process basecall {
@@ -20,10 +20,10 @@ publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 stageInMode 'symlink'
 
 input:
-set file('read_dir'), dir, name from read_ch
+set dir, name, file('read_dir') from read_ch
 
 output:
-set file('Basecalled.fastq'), dir, name into base_ch
+set dir, name, file('Basecalled.fastq') into base_ch
 
 script:
 """
@@ -46,10 +46,10 @@ publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 stageInMode ( ( params.basecalled && workflow.profile == 'zeus' ) ? 'copy' : 'symlink' )
 
 input:
-set file('Basecalled.fastq'), dir, name from base_ch.mix(basefile_ch)
+set dir, name, file('Basecalled.fastq') from base_ch.mix(basefile_ch)
 
 output:
-set file('Chopped.fastq'), dir, name into chop_ch,chop2_ch
+set dir, name, file('Chopped.fastq') into chop_ch,chop2_ch
 
 script:
 """
@@ -65,10 +65,10 @@ tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 
 input:
-set file('Chopped.fastq'), dir, name from chop_ch
+set dir, name, file('Chopped.fastq') from chop_ch
 
 output:
-set file('Denovo_subset.fa'), dir, name into denovo_ch,denovo2_ch
+set dir, name, file('Denovo_subset.fa') into denovo_ch,denovo2_ch
 
 script:
 """
@@ -88,11 +88,11 @@ tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 
 input:
-set file('Denovo_subset.fa'), dir, name from denovo_ch
+set dir, name, file('Denovo_subset.fa') from denovo_ch
 
 output:
-set file('blast.tsv'), dir, name into blast_ch
-set file('blast.xml'), dir, name into blast_xml_ch
+set dir, name, file('blast.tsv') into blast_ch
+set dir, name, file('blast.xml') into blast_xml_ch
 
 when:
 !params.diamond
@@ -123,11 +123,11 @@ tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 
 input:
-set file('Denovo_subset.fa'), dir, name from denovo2_ch
+set dir, name, file('Denovo_subset.fa') from denovo2_ch
 
 output:
-set file('diamond.tsv'), dir, name into diamond_ch
-set file('diamond.xml'), dir, name into diamond_xml_ch
+set dir, name, file('diamond.tsv') into diamond_ch
+set dir, name, file('diamond.xml') into diamond_xml_ch
 
 when:
 params.diamond
@@ -163,7 +163,7 @@ input:
 val seqid from seqid_ch
 
 output:
-set file('Refseq.fasta'), seqid into seq_ch
+set seqid, file('Refseq.fasta') into seq_ch
 
 script:
 """
@@ -182,10 +182,10 @@ tag "${dir}/${name}_${seqid}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy', saveAs: { filename -> "Aligned_${seqid}.bam" }
 
 input:
-set file('Chopped.fastq'), dir, name, file('Refseq.fasta'), seqid from chop2_ch.combine( seq_ch )
+set dir, name, file('Chopped.fastq'), seqid, file('Refseq.fasta') from chop2_ch.combine( seq_ch )
 
 output:
-file('Aligned.bam') into align_ch
+set dir, name, seqid, file('Aligned.bam') into align_ch
 
 script:
 """
