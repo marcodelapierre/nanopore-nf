@@ -77,4 +77,4 @@ Reference data:
 
 The `extra` directory contains example Slurm scripts, `job1.sh` and `job2.sh` to run on Zeus. There is also a sample script `log.sh` that takes a run name as input and displays formatted runtime information.
 
-The `test` directory contains a small input dataset and a launching script for quick testing of the pipeline, with total runtime under a minute.
+The `test` directory contains a small input dataset and a launching script for quick testing of the pipeline, with total runtime around a minute.
