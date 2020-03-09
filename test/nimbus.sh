@@ -1,6 +1,10 @@
 #!/bin/bash
 
-singularity exec docker://quay.io/biocontainers/blast:2.7.1--h4422958_6 makeblastdb -in tinydb.fasta -dbtype nucl -parse_seqids
+docker run --rm \
+  -u $(id -u):$(id -g) \
+  -v $(pwd):/data -w /data \
+  quay.io/biocontainers/blast:2.7.1--h4422958_6 \
+  makeblastdb -in tinydb.fasta -dbtype nucl -parse_seqids
 
 nextflow run main.nf \
   --basecalled='small.fastq' \
