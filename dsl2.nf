@@ -176,7 +176,7 @@ tag "${dir}/${name}_${seqid}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy', saveAs: { filename -> "Aligned_${seqid}.bam" }
 
 input:
-tuple val(dir), val(name), path('Chopped.fastq'), seqid, path('Refseq.fasta')
+tuple val(dir), val(name), path('Chopped.fastq'), val(seqid), path('Refseq.fasta')
 
 output:
 tuple val(dir), val(name), val(seqid), path('Aligned.bam')
