@@ -12,7 +12,6 @@ params.evalue='0.1'
 params.outsuffix='results_'
 
 
-
 process basecall {
 tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
@@ -150,10 +149,6 @@ sort -n -r -k 6 diamond_unsort.tsv >diamond.tsv
 }
 
 
-seqid_list = params.seqid?.tokenize(',')
-seqid_ch = seqid_list ? Channel.from( seqid_list ) : Channel.empty()
-
-
 process seqfile {
 tag "${seqid}"
 publishDir '.', mode: 'copy', saveAs: { filename -> "Refseq_${seqid}.fasta" }
@@ -196,14 +191,13 @@ mini_align \
 }
 
 
-
 workflow {
 
 read_ch =     params.basecalled ? Channel.empty() : Channel.fromPath( params.read_dir ).map{ it -> [ it.parent, it.name, it ] }
 basefile_ch = params.basecalled ? Channel.fromPath( params.basecalled ).map{ it -> [ it.parent, it.name, it ] } : Channel.empty()
 
 seqid_list = params.seqid?.tokenize(',')
-seqid_ch = seqid_list ? Channel.from( seqid_list ) : Channel.empty()
+seqid_ch = seqid_list ? Channel.fromList( seqid_list ) : Channel.empty()
 
 basecall(read_ch)
 
