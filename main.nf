@@ -1,5 +1,7 @@
 #!/usr/bin/env nextflow
 
+nextflow.enable.dsl=2
+
 params.read_dir='reads'
 params.basecalled = ''
 params.diamond = false
@@ -10,20 +12,16 @@ params.evalue='0.1'
 params.outsuffix='results_'
 
 
-read_ch =     params.basecalled ? Channel.empty() : Channel.fromPath( params.read_dir ).map{ it -> [ it.parent, it.name, it ] }
-basefile_ch = params.basecalled ? Channel.fromPath( params.basecalled ).map{ it -> [ it.parent, it.name, it ] } : Channel.empty()
-
-
 process basecall {
 tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 stageInMode 'symlink'
 
 input:
-set dir, name, file('read_dir') from read_ch
+tuple val(dir), val(name), path('read_dir')
 
 output:
-set dir, name, file('Basecalled.fastq') into base_ch
+tuple val(dir), val(name), path('Basecalled.fastq')
 
 script:
 """
@@ -46,10 +44,10 @@ publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 stageInMode ( ( params.basecalled && workflow.profile == 'zeus' ) ? 'copy' : 'symlink' )
 
 input:
-set dir, name, file('Basecalled.fastq') from base_ch.mix(basefile_ch)
+tuple val(dir), val(name), path('Basecalled.fastq')
 
 output:
-set dir, name, file('Chopped.fastq') into chop_ch,chop2_ch
+tuple val(dir), val(name), path('Chopped.fastq')
 
 script:
 """
@@ -65,10 +63,10 @@ tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 
 input:
-set dir, name, file('Chopped.fastq') from chop_ch
+tuple val(dir), val(name), path('Chopped.fastq')
 
 output:
-set dir, name, file('Denovo_subset.fa') into denovo_ch,denovo2_ch
+tuple val(dir), val(name), path('Denovo_subset.fa')
 
 script:
 """
@@ -88,11 +86,11 @@ tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 
 input:
-set dir, name, file('Denovo_subset.fa') from denovo_ch
+tuple val(dir), val(name), path('Denovo_subset.fa')
 
 output:
-set dir, name, file('blast.tsv') into blast_ch
-set dir, name, file('blast.xml') into blast_xml_ch
+tuple val(dir), val(name), path('blast.tsv')
+tuple val(dir), val(name), path('blast.xml')
 
 when:
 !params.diamond
@@ -123,11 +121,11 @@ tag "${dir}/${name}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
 
 input:
-set dir, name, file('Denovo_subset.fa') from denovo2_ch
+tuple val(dir), val(name), path('Denovo_subset.fa')
 
 output:
-set dir, name, file('diamond.tsv') into diamond_ch
-set dir, name, file('diamond.xml') into diamond_xml_ch
+tuple val(dir), val(name), path('diamond.tsv')
+tuple val(dir), val(name), path('diamond.xml')
 
 when:
 params.diamond
@@ -151,19 +149,15 @@ sort -n -r -k 6 diamond_unsort.tsv >diamond.tsv
 }
 
 
-seqid_list = params.seqid?.tokenize(',')
-seqid_ch = seqid_list ? Channel.from( seqid_list ) : Channel.empty()
-
-
 process seqfile {
 tag "${seqid}"
 publishDir '.', mode: 'copy', saveAs: { filename -> "Refseq_${seqid}.fasta" }
 
 input:
-val seqid from seqid_ch
+val(seqid)
 
 output:
-set seqid, file('Refseq.fasta') into seq_ch
+tuple val(seqid), path('Refseq.fasta')
 
 script:
 """
@@ -182,10 +176,10 @@ tag "${dir}/${name}_${seqid}"
 publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy', saveAs: { filename -> "Aligned_${seqid}.bam" }
 
 input:
-set dir, name, file('Chopped.fastq'), seqid, file('Refseq.fasta') from chop2_ch.combine( seq_ch )
+tuple val(dir), val(name), path('Chopped.fastq'), val(seqid), path('Refseq.fasta')
 
 output:
-set dir, name, seqid, file('Aligned.bam') into align_ch
+tuple val(dir), val(name), val(seqid), path('Aligned.bam')
 
 script:
 """
@@ -194,4 +188,28 @@ mini_align \
   -p Aligned \
   -t ${task.cpus}
 """
+}
+
+
+workflow {
+
+read_ch =     params.basecalled ? Channel.empty() : Channel.fromPath( params.read_dir ).map{ it -> [ it.parent, it.name, it ] }
+basefile_ch = params.basecalled ? Channel.fromPath( params.basecalled ).map{ it -> [ it.parent, it.name, it ] } : Channel.empty()
+
+seqid_list = params.seqid?.tokenize(',')
+seqid_ch = seqid_list ? Channel.fromList( seqid_list ) : Channel.empty()
+
+basecall(read_ch)
+
+chop(basecall.out.mix(basefile_ch))
+
+assemble(chop.out)
+
+blast(assemble.out)
+diamond(assemble.out)
+
+seqfile(seqid_ch)
+
+align(chop.out.combine(seqfile.out))
+
 }

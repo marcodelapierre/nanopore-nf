@@ -1,8 +1,7 @@
 ## Nanopore pipeline for DPIRD - Nextflow edition
 
 The pipeline requires [Nextflow](https://github.com/nextflow-io/nextflow) to run. 
-Tests have been done with Nextflow version `19.04.1`. 
-The standard profile assumes running on Zeus at Pawsey Supercomputing Centre and uses containerised software.
+DSL2 syntax is used, so that Nextflow version `20.07.1` or higher is recommended.
 
 
 ### Pipeline
@@ -63,6 +62,9 @@ A similar syntax holds when using basecalled FASTQ inputs through the flag `--ba
 
 
 ### Requirements
+
+Setup:
+* Singularity or Docker -- if you wish to use containerised software
 
 Software:
 * Guppy
