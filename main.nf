@@ -193,11 +193,11 @@ mini_align \
 
 workflow {
 
-read_ch =     params.basecalled ? Channel.empty() : Channel.fromPath( params.read_dir ).map{ it -> [ it.parent, it.name, it ] }
-basefile_ch = params.basecalled ? Channel.fromPath( params.basecalled ).map{ it -> [ it.parent, it.name, it ] } : Channel.empty()
+read_ch =     params.basecalled ? channel.empty() : channel.fromPath( params.read_dir ).map{ it -> [ it.parent, it.name, it ] }
+basefile_ch = params.basecalled ? channel.fromPath( params.basecalled ).map{ it -> [ it.parent, it.name, it ] } : channel.empty()
 
 seqid_list = params.seqid?.tokenize(',')
-seqid_ch = seqid_list ? Channel.fromList( seqid_list ) : Channel.empty()
+seqid_ch = seqid_list ? channel.fromList( seqid_list ) : channel.empty()
 
 basecall(read_ch)
 
