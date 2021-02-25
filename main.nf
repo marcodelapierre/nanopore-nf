@@ -9,12 +9,12 @@ params.seqid=''
 
 params.min_len_contig='1000'
 params.evalue='0.1'
-params.outsuffix='results_'
+params.outprefix='results_'
 
 
 process basecall {
 tag "${dir}/${name}"
-publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
+publishDir "${dir}/${params.outprefix}${name}", mode: 'copy'
 stageInMode 'symlink'
 
 input:
@@ -40,7 +40,7 @@ ln -s pass/fastq_runid_*.fastq Basecalled.fastq
 
 process chop {
 tag "${dir}/${name}"
-publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
+publishDir "${dir}/${params.outprefix}${name}", mode: 'copy'
 stageInMode ( ( params.basecalled && workflow.profile == 'zeus' ) ? 'copy' : 'symlink' )
 
 input:
@@ -60,7 +60,7 @@ porechop \
 
 process assemble{
 tag "${dir}/${name}"
-publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
+publishDir "${dir}/${params.outprefix}${name}", mode: 'copy'
 
 input:
 tuple val(dir), val(name), path('Chopped.fastq')
@@ -83,7 +83,7 @@ awk -v min_len_contig=${params.min_len_contig} \
 
 process blast {
 tag "${dir}/${name}"
-publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
+publishDir "${dir}/${params.outprefix}${name}", mode: 'copy'
 
 input:
 tuple val(dir), val(name), path('Denovo_subset.fa')
@@ -118,7 +118,7 @@ sort -n -r -k 6 blast_unsort.tsv >blast.tsv
 
 process diamond {
 tag "${dir}/${name}"
-publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy'
+publishDir "${dir}/${params.outprefix}${name}", mode: 'copy'
 
 input:
 tuple val(dir), val(name), path('Denovo_subset.fa')
@@ -173,7 +173,7 @@ sed -i '/^>/ s/ .*//g' Refseq.fasta
 
 process align {
 tag "${dir}/${name}_${seqid}"
-publishDir "${dir}/${params.outsuffix}${name}", mode: 'copy', saveAs: { filename -> "Aligned_${seqid}.bam" }
+publishDir "${dir}/${params.outprefix}${name}", mode: 'copy', saveAs: { filename -> "Aligned_${seqid}.bam" }
 
 input:
 tuple val(dir), val(name), path('Chopped.fastq'), val(seqid), path('Refseq.fasta')
