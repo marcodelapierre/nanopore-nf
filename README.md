@@ -24,7 +24,7 @@ nextflow run marcodelapierre/nanopore-nf \
 The flag `--read_dir` feeds the directory name where read files from a single experiment are located. 
 Name patterns can be used to run multiple experiments at once. Output files are stored in subdirectory(ies) with name `results_$read_dir`. 
 The flag `--slurm_account` sets your Pawsey account to run on Zeus. In alternative, edit the value of the variable `params.slurm_account` in the file `nextflow.config`. 
-Finally, the flag `-profile` allows to select the appropriate profile for the machine in use, Zeus in this case.
+Finally, the flag `-profile` (note the single dash) allows to select the appropriate profile for the machine in use, Zeus in this case.
 
 After blasting and identifying reference sequences of interest, alignment can be performed against them, by using the flag `--seqid` to provide the sequence IDs:
 
