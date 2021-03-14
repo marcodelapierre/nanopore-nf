@@ -18,7 +18,7 @@ Basecalling\* -> Chopping -> De-novo assembling -> Blasting\+ -> Aligning\#
 ```
 nextflow run marcodelapierre/nanopore-nf \
   --read_dir='reads' \
-  -profile zeus --slurm_account='pawsey0001'
+  -profile zeus --slurm_account='<YOUR PROJECT>'
 ```
 
 The flag `--read_dir` feeds the directory name where read files from a single experiment are located. 
@@ -32,7 +32,7 @@ After blasting and identifying reference sequences of interest, alignment can be
 nextflow run marcodelapierre/nanopore-nf \
   --read_dir='reads' \
   --seqid='comma,separated,list,of,ids,from,blast' \
-  -profile zeus --slurm_account='pawsey0001'
+  -profile zeus --slurm_account='<YOUR PROJECT>'
 ```
 
 
